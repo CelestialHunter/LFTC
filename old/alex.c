@@ -16,7 +16,7 @@ typedef enum {ID,
     ADD, SUB, MUL, DIV, AND, OR, NOT, 
         ASSIGN, EQUAL, NOTEQ, LESS} LEXIC; // operatori	
 
-char* lexems[] = {"ID", 
+const char* lexems[] = {"ID", 
 	"INT", "REAL", "STR", // constante
 	"VAR", "FUNCTION", "IF", "ELSE", "WHILE", "END", 
 		"RETURN", "TYPE_INT", "TYPE_REAL", "TYPE_STR", // cuvinte cheie
@@ -181,6 +181,8 @@ LEXIC getNextAtom(FILE* fin)
 				else
 				{
 					// ERROR - Digit expected
+					printf("ERROR - DIGIT EXPECTED\n");
+					exit(0);
 				}
 				break;
 			case 4:
@@ -416,6 +418,12 @@ FILE* open_file(char* filename)
 	}
 	return f;
 }
+
+// TODO: Move ALEX to a module (.c / .h files)
+
+// TODO: Implement ASIN (syntactic analyzer) as a module
+
+// TODO: implement QUICK compiler using ALEX and ASIN modules
 
 int main(int argc, char* argv[]) {
 	char filename[100];
