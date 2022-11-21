@@ -11,8 +11,13 @@
 
 /*---------INCLUDES--------*/
 
+#ifndef ALEX_H
 #include "alex.h"
+#endif
+
+#ifndef ASIN_H
 #include "asin.h"
+#endif
 
 /*-------------------------*/
 

@@ -21,6 +21,33 @@ const char* lexems[] = {"ID",
 
 /*--------FUNCTIONS--------*/
 
+void readFile(char *fileName)
+{
+	FILE* f = openFile(fileName);
+	while(getNextAtom(f) != FINISH) {}
+
+	fclose(f);
+}
+
+void printProgram()
+{
+	Atom* atomi = getAtomi();
+	int i = 0, last_line = 0;
+
+	for(i = 0; i < getAtomiLen(); i++)
+	{
+		if(atomi[i].line != last_line)
+		{
+			printf("\nLine #%d: ", atomi[i].line);
+			last_line = atomi[i].line;
+		}
+		printAtom(atomi[i]);
+		
+	}
+
+	printf("\n");
+}
+
 void printAtom(Atom a) {
 	printf("%s", lexems[a.code]);
 	if (a.code == INT) printf(":%ld", a.value.i);

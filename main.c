@@ -6,7 +6,7 @@
 // This is the main program.
 /*-------------------------*/
 
-#include "lftc/alex.h"
+#include "lftc/lftc.h"
 
 int main(int argc, char* argv[]) {
 
@@ -21,26 +21,28 @@ int main(int argc, char* argv[]) {
 		printf("Introduceti numele fisierului: ");
 		scanf("%s", filename);
 	}
-    
-	FILE* f = openFile(filename);
-	int i;
-	int last_line = 0;
-	while(getNextAtom(f) != FINISH) {}
 
-    Atom* atomi = getAtomi();
+	printf("Reading file...\n");
+	readFile(filename);
+	printf("\nFile read!\n");
+	printf("############################\n");
+	printf("\nLexical analysis...\n");
+	printProgram(); 
+	printf("\nLexical analysis done!\n");
+	printf("############################\n");
 
-	for(i = 0; i < getAtomiLen(); i++)
+	printf("Syntax analysis...\n");
+	initAsin();
+
+	if(program())
 	{
-		if(atomi[i].line != last_line)
-		{
-			printf("\nLine #%d: ", atomi[i].line);
-			last_line = atomi[i].line;
-		}
-		printAtom(atomi[i]);
-		
+		printf("Programul este corect sintactic!\n");
 	}
-
-	printf("\n");
+	else
+	{
+		printf("Programul nu este corect sintactic!\n");
+	}   
+	printf("############################\n");
 
 	unallocAtoms();
 }

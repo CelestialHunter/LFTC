@@ -23,6 +23,25 @@
 
 
 /*--------FUNCTIONS--------*/
+int consumeAtom(LEXIC);
+extern void initAsin();
+extern int program();
+int defVar();
+int baseType();
+int defFunc();
+int block();
+int funcParams();
+int funcParam();
+int instr();
+int expr();
+int exprLogic();
+int exprAssign();
+int exprComp();
+int exprAdd();
+int exprMul();
+int exprPrefix();
+int factor();
+
 /*-------------------------*/
 
 #endif

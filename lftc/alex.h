@@ -7,7 +7,7 @@
 /*-------------------------*/
 
 #ifndef ALEX_H
-#define ALEX_h
+#define ALEX_H
 
 /*---------INCLUDES--------*/
 
@@ -58,6 +58,10 @@ typedef struct {
 
 
 /*--------FUNCTIONS--------*/
+
+extern void readFile(char*);
+
+void printProgram();
 
 void printAtom(Atom);
 
