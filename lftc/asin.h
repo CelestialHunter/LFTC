@@ -26,6 +26,7 @@
 int consumeAtom(LEXIC);
 extern void initAsin();
 extern int program();
+extern void printError(char*, int);
 int defVar();
 int baseType();
 int defFunc();

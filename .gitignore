@@ -58,4 +58,7 @@ dkms.conf
 # My executable
 LFTC_EXEC
 
+# test files
+test_files/
+
 # End of https://www.toptal.com/developers/gitignore/api/c

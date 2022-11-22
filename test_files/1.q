@@ -1,2 +1,2 @@
-var i:type_int;
+var i:INT;
 i = 12;

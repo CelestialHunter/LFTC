@@ -4,7 +4,6 @@
 Atom* currentAtom;
 Atom* consumedAtom;
 
-char error[100];
 /*-------------------------*/
 
 /*--------FUNCTIONS--------*/
@@ -21,19 +20,17 @@ void initAsin() {
     consumedAtom = NULL;
 }
 
+void printError(char* error, int line)
+{
+    printf(error, line);
+    exit(0);
+}
+
 int program() 
 {
     while(1)
     {
-        if(defVar())
-        {
-            continue;
-        }
-        if(defFunc())
-        {
-            continue;
-        }
-        if(block())
+        if(defVar() || defFunc() || block())
         {
             continue;
         }
@@ -43,10 +40,7 @@ int program()
     {
         return 1;
     }
-    else
-    {
-        return 0;
-    }
+    printError("Eroare la linia %d: Asteptam un atom final\n", consumedAtom->line+1);
 }
 
 int defVar()
@@ -66,28 +60,28 @@ int defVar()
                     else 
                     {
                         // error: SEMICOLON expected
-                        printf("Error: SEMICOLON [ \" ; \" ] expected at line %d\n", currentAtom->line);
+                        printError( "Error: SEMICOLON [ \" ; \" ] expected at line %d\n", currentAtom->line);
                         return 0;
                     }
                 }
                 else 
                 {
                     // error: baseType expected
-                    printf("Error: valid baseType expected at line %d\n", currentAtom->line);
+                    printError( "Error: valid baseType expected at line %d\n", currentAtom->line);
                     return 0;
                 }
             }
             else 
             {
                 // error: COLON expected
-                printf("Error: COLON [ \" : \" ] expected at line %d\n", currentAtom->line);
+                printError( "Error: COLON [ \" : \" ] expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
         else 
         {
             // error: ID expected
-            printf("Error: ID expected at line %d\n", currentAtom->line);
+            printError( "Error: ID expected at line %d\n", currentAtom->line);
             return 0;
         }
     }
@@ -112,7 +106,7 @@ int baseType()
         return 1;
     }
     // error: baseType expected
-    printf("Error: valid baseType expected at line %d\n", currentAtom->line);
+    printError( "Error: valid baseType expected at line %d\n", currentAtom->line);
     return 0;
 }
 
@@ -149,59 +143,60 @@ int defFunc()
                                     else 
                                     {
                                         // error: END expected
-                                        printf("Error: END expected at line %d\n", currentAtom->line);
+                                        printError( "Error: END expected at line %d\n", currentAtom->line);
                                         return 0;
                                     }
                                 }
                                 else 
                                 {
                                     // error: block expected
-                                    printf("Error: block expected at line %d\n", currentAtom->line);
+                                    printError( "Error: block expected at line %d\n", currentAtom->line);
                                     return 0;
                                 }
                             }
                             else 
                             {
                                 // error: baseType expected
-                                printf("Error: valid baseType expected at line %d\n", currentAtom->line);
+                                printError( "Error: valid baseType expected at line %d\n", currentAtom->line);
                                 return 0;
                             }
                         }
                         else 
                         {
                             // error: COLON expected
-                            printf("Error: COLON [ \" : \" ] expected at line %d\n", currentAtom->line);
+                            printError( "Error: COLON [ \" : \" ] expected at line %d\n", currentAtom->line);
                             return 0;
                         }
                     }
                     else 
                     {
                         // error: RPAR expected
-                        printf("Error: RPAR [ \" ) \" ] expected at line %d\n", currentAtom->line);
+                        printError( "Error: RPAR [ \" ) \" ] expected at line %d\n", currentAtom->line);
                         return 0;
                     }
                 }
                 else 
                 {
                     // error: funcParams expected
-                    printf("Error: valid funcParams expected at line %d\n", currentAtom->line);
+                    printError( "Error: valid funcParams expected at line %d\n", currentAtom->line);
                     return 0;
                 }
             }
             else 
             {
                 // error: LPAR expected
-                printf("Error: LPAR [ \" ( \" ] expected at line %d\n", currentAtom->line);
+                printError( "Error: LPAR [ \" ( \" ] expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
         else 
         {
             // error: ID expected
-            printf("Error: ID expected at line %d\n", currentAtom->line);
+            printError( "Error: ID expected at line %d\n", currentAtom->line);
             return 0;
         }
     }
+    //currentAtom = consumedAtom;
     return 0;
 }
 
@@ -219,7 +214,8 @@ int block()
         }
         return 1;
     }
-    printf("Error: valid instruction expected at line %d\n", currentAtom->line);
+    //currentAtom = consumedAtom;
+    //printError( "Error: valid instruction expected at line %d\n", currentAtom->line);
     return 0;
 }
 
@@ -237,7 +233,7 @@ int funcParams()
             else
             {
                 // error: funcParam expected
-                printf("Error: valid funcParam expected at line %d\n", currentAtom->line);
+                printError( "Error: valid funcParam expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
@@ -259,18 +255,19 @@ int funcParam()
             else 
             {
                 // error: baseType expected
-                printf("Error: valid baseType expected at line %d\n", currentAtom->line);
+                printError( "Error: valid baseType expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
         else 
         {
             // error: COLON expected
-            printf("Error: COLON [ \" : \" ] expected at line %d\n", currentAtom->line);
+            printError( "Error: COLON [ \" : \" ] expected at line %d\n", currentAtom->line);
             return 0;
         }
     }
-    printf("Error: ID expected at line %d\n", currentAtom->line);
+    //currentAtom = consumedAtom;
+    //printError( "Error: ID expected at line %d\n", currentAtom->line);
     return 0;
 }
 
@@ -279,7 +276,7 @@ int instr()
     if (expr())
         if(!consumeAtom(SEMICOLON))
         {
-            printf("Error: SEMICOLON [ \" ; \" ] expected at line %d\n", currentAtom->line);
+            printError( "Error: SEMICOLON [ \" ; \" ] expected at line %d\n", currentAtom->line);
             return 0;
         }
         else return 1;
@@ -304,14 +301,14 @@ int instr()
                                 else 
                                 {
                                     // error: END expected
-                                    printf("Error: END expected at line %d\n", currentAtom->line);
+                                    printError( "Error: END expected at line %d\n", currentAtom->line);
                                     return 0;
                                 }
                             }
                             else 
                             {
                                 // error: block expected
-                                printf("Error: valid block expected at line %d\n", currentAtom->line);
+                                printError( "Error: valid block expected at line %d\n", currentAtom->line);
                                 return 0;
                             }
                         }
@@ -322,35 +319,35 @@ int instr()
                         else 
                         {
                             // error: END expected
-                            printf("Error: END expected at line %d\n", currentAtom->line);
+                            printError( "Error: END expected at line %d\n", currentAtom->line);
                             return 0;
                         }
                     }
                     else 
                     {
                         // error: block expected
-                        printf("Error: valid block expected at line %d\n", currentAtom->line);
+                        printError( "Error: valid block expected at line %d\n", currentAtom->line);
                         return 0;
                     }
                 }
                 else 
                 {
                     // error: RPAR expected
-                    printf("Error: RPAR [ \" ) \" ] expected at line %d\n", currentAtom->line);
+                    printError( "Error: RPAR [ \" ) \" ] expected at line %d\n", currentAtom->line);
                     return 0;
                 }
             }
             else 
             {
                 // error: expr expected
-                printf("Error: valid expression expected at line %d\n", currentAtom->line);
+                printError( "Error: valid expression expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
         else 
         {
             // error: LPAR expected
-            printf("Error: LPAR [ \" ( \" ] expected at line %d\n", currentAtom->line);
+            printError( "Error: LPAR [ \" ( \" ] expected at line %d\n", currentAtom->line);
             return 0;
         }
     }
@@ -365,13 +362,13 @@ int instr()
             else 
             {
                 // error: SEMICOLON expected
-                printf("Error: SEMICOLON [ \" ; \" ] expected at line %d\n", currentAtom->line);
+                printError( "Error: SEMICOLON [ \" ; \" ] expected at line %d\n", currentAtom->line);
             }
         }
         else 
         {
             // error: expr expected
-            printf("Error: valid expression expected at line %d\n", currentAtom->line);
+            printError( "Error: valid expression expected at line %d\n", currentAtom->line);
         }
     }
     if(consumeAtom(WHILE))
@@ -391,38 +388,38 @@ int instr()
                         else 
                         {
                             // error: END expected
-                            printf("Error: END expected at line %d\n", currentAtom->line);
+                            printError( "Error: END expected at line %d\n", currentAtom->line);
                             return 0;
                         }
                     }
                     else 
                     {
                         // error: block expected
-                        printf("Error: valid block expected at line %d\n", currentAtom->line);
+                        printError( "Error: valid block expected at line %d\n", currentAtom->line);
                         return 0;
                     }
                 }
                 else 
                 {
                     // error: RPAR expected
-                    printf("Error: RPAR [ \" ) \" ] expected at line %d\n", currentAtom->line);
+                    printError( "Error: RPAR [ \" ) \" ] expected at line %d\n", currentAtom->line);
                     return 0;
                 }
             }
             else 
             {
                 // error: expr expected
-                printf("Error: valid expression expected at line %d\n", currentAtom->line);
+                printError( "Error: valid expression expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
         else 
         {
             // error: LPAR expected
-            printf("Error: LPAR [ \" ( \" ] expected at line %d\n", currentAtom->line);
+            printError( "Error: LPAR [ \" ( \" ] expected at line %d\n", currentAtom->line);
         }
     }
-    printf("Error: an instruction was expected at line %d\n", currentAtom->line);
+    //printError( "Error: an instruction was expected at line %d\n", currentAtom->line);
     return 0; // instr expected
 }
 
@@ -446,12 +443,13 @@ int exprLogic()
                 else 
                 {
                     // error: exprLogic expected
-                    printf("Error: valid logic expression expected at line %d\n", currentAtom->line);
+                    printError( "Error: valid logic expression expected at line %d\n", currentAtom->line);
                     return 0;
                 }
             }
             break;
         }
+        return 1;
     }
 }
 
@@ -468,16 +466,20 @@ int exprAssign()
             else 
             {
                 // error: exprComp expected
-                printf("Error: valid comparison expression expected at line %d\n", currentAtom->line);
+                printError( "Error: valid comparison expression expected at line %d\n", currentAtom->line);
                 return 0;
             }
+        }
+        else
+        {
+            currentAtom = consumedAtom;
         }
     }
     if (exprComp())
     {
         return 1;
     }
-    printf("Error: valid assignment expression expected at line %d\n", currentAtom->line);
+    //printError( "Error: valid assignment expression expected at line %d\n", currentAtom->line);
     return 0;
 }
 
@@ -494,7 +496,7 @@ int exprComp()
             else 
             {
                 // error: exprAdd expected
-                printf("Error: valid addition expression expected at line %d\n", currentAtom->line);
+                printError( "Error: valid comparing expression expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
@@ -507,14 +509,14 @@ int exprComp()
             else 
             {
                 // error: exprAdd expected
-                printf("Error: valid addition expression expected at line %d\n", currentAtom->line);
+                printError( "Error: valid assignment expression expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
 
         return 1;
     }
-    printf("Error: valid addition expression expected at line %d\n", currentAtom->line);
+    //printError( "Error: valid addition expression expected at line %d\n", currentAtom->line);
     return 0;
 }
 
@@ -531,7 +533,7 @@ int exprAdd()
             else 
             {
                 // error: exprMul expected
-                printf("Error: valid multiplication expression expected at line %d\n", currentAtom->line);
+                printError( "Error: valid addition expression expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
@@ -544,14 +546,14 @@ int exprAdd()
             else 
             {
                 // error: exprMul expected
-                printf("Error: valid multiplication expression expected at line %d\n", currentAtom->line);
+                printError( "Error: valid subtraction expression expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
 
         return 1;
     }
-    printf("Error: valid multiplication expression expected at line %d\n", currentAtom->line);
+    //printError( "Error: valid multiplication expression expected at line %d\n", currentAtom->line);
     return 0;
 }
 
@@ -568,7 +570,7 @@ int exprMul()
             else 
             {
                 // error: exprPrefix expected
-                printf("Error: valid prefix expression expected at line %d\n", currentAtom->line);
+                printError( "Error: valid prefix expression expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
@@ -581,14 +583,14 @@ int exprMul()
             else 
             {
                 // error: exprPrefix expected
-                printf("Error: valid prefix expression expected at line %d\n", currentAtom->line);
+                printError( "Error: valid prefix expression expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
         return 1;
     }
     // error: exprPrefix expected
-    printf("Error: valid prefix expression expected at line %d\n", currentAtom->line);
+    //printError( "Error: valid prefix expression expected at line %d\n", currentAtom->line);
     return 0;
 }
 
@@ -599,7 +601,7 @@ int exprPrefix()
     {
         return 1;
     }
-    printf("Error: valid factor expected at line %d\n", currentAtom->line);
+    //printError( "Error: valid factor expected at line %d\n", currentAtom->line);
     return 0;
 }
 
@@ -628,14 +630,14 @@ int factor()
             else 
             {
                 // error: RPAR expected
-                printf("Error: RPAR [ \" ) \" ] expected at line %d\n", currentAtom->line);
+                printError( "Error: RPAR [ \" ) \" ] expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
         else 
         {
             // error: expr expected
-            printf("Error: valid expression expected at line %d\n", currentAtom->line);
+            printError( "Error: valid expression expected at line %d\n", currentAtom->line);
             return 0;
         }
     }
@@ -649,11 +651,11 @@ int factor()
                 {
                     if(consumeAtom(COMMA))
                     {
-                        if(expr) continue;
+                        if(expr()) continue;
                         else 
                         {
                             // error: expr expected
-                            printf("Error: valid expression expected at line %d\n", currentAtom->line);
+                            printError( "Error: valid expression expected at line %d\n", currentAtom->line);
                             return 0;
                         }
                     }
@@ -663,20 +665,20 @@ int factor()
                 else 
                 {
                     // error: RPAR expected
-                    printf("Error: RPAR [ \" ) \" ] expected at line %d\n", currentAtom->line);
+                    printError( "Error: RPAR [ \" ) \" ] expected at line %d\n", currentAtom->line);
                     return 0;
                 }
             }
             else 
             {
                 // error: expr expected
-                printf("Error: valid expression expected at line %d\n", currentAtom->line);
+                printError( "Error: valid expression expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
         return 1;
     }
-    printf("Error: factor expected at line %d\n", currentAtom->line);
+    //printError( "Error: factor expected at line %d\n", currentAtom->line);
     return 0; 
 }
 

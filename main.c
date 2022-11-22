@@ -38,11 +38,10 @@ int main(int argc, char* argv[]) {
 	{
 		printf("Programul este corect sintactic!\n");
 	}
-	else
-	{
-		printf("Programul nu este corect sintactic!\n");
-	}   
+	  
 	printf("############################\n");
 
 	unallocAtoms();
+
+	return 0;
 }
