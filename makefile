@@ -1,7 +1,7 @@
 #make program
 
 #macro:
-TARGET = main.o alex.o asin.o
+TARGET = main.o alex.o asin.o ad.o
 
 lftc_exec: $(TARGET)
 		gcc -o LFTC_EXEC ${TARGET} -g
@@ -14,6 +14,9 @@ alex.o: lftc/alex.c lftc/alex.h lftc/lftc.h
 
 asin.o: lftc/asin.c lftc/asin.h lftc/lftc.h
 		gcc -c lftc/asin.c -g
+
+ad.o: lftc/ad.c lftc/ad.h lftc/lftc.h
+		gcc -c lftc/ad.c -g
 
 clean: 
 		rm -f *.o

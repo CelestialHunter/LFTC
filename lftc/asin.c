@@ -28,6 +28,8 @@ void printError(char* error, int line)
 
 int program() 
 {
+    adaugaDomeniu();
+
     while(1)
     {
         if(defVar() || defFunc() || block())
@@ -38,6 +40,8 @@ int program()
     }
     if(consumeAtom(FINISH))
     {
+        stergeDomeniu();
+
         return 1;
     }
     printError("Eroare la linia %d: Asteptam un atom final\n", consumedAtom->line+1);
@@ -49,10 +53,22 @@ int defVar()
     {
         if(consumeAtom(ID))
         {
+
+            const char* nume = consumedAtom->value.s;
+            Simbol* s = cautaInDomeniulCurent(nume);
+            if(s) {
+                char error[100];
+                sprintf(error, "Eroare la linia %d: Simbolul %s este deja definit\n", consumedAtom->line, nume);
+                printError(error, consumedAtom->line);
+            }
+            s = adaugaSimbol(nume, FEL_VAR);
+            s->local = crtFn != NULL;
+
             if(consumeAtom(COLON))
             {
                 if(baseType())
                 {
+                    s->tip = ret.tip;
                     if(consumeAtom(SEMICOLON))
                     {
                         return 1;
@@ -67,7 +83,7 @@ int defVar()
                 else 
                 {
                     // error: baseType expected
-                    printError( "Error: valid baseType expected at line %d\n", currentAtom->line);
+                    printError( "Error: variable baseType expected at line %d\n", currentAtom->line);
                     return 0;
                 }
             }
@@ -95,18 +111,21 @@ int baseType()
 {
     if(consumeAtom(TYPE_INT))
     {
+        ret.tip = TYPE_INT;
         return 1;
     }
     if(consumeAtom(TYPE_REAL))
     {
+        ret.tip = TYPE_REAL;
         return 1;
     }
     if(consumeAtom(TYPE_STR))
     {
+        ret.tip = TYPE_STR;
         return 1;
     }
     // error: baseType expected
-    printError( "Error: valid baseType expected at line %d\n", currentAtom->line);
+    //printError( "Error: valid baseType expected at line %d\n", currentAtom->line);
     return 0;
 }
 
@@ -116,6 +135,19 @@ int defFunc()
     {
         if(consumeAtom(ID))
         {
+
+            const char* nume = consumedAtom->value.s;
+            Simbol* s = cautaInDomeniulCurent(nume);
+            if(s) {
+                char error[100];
+                sprintf(error, "Eroare la linia %d: Simbolul %s este deja definit\n", consumedAtom->line, nume);
+                printError(error, consumedAtom->line);
+            }
+            crtFn = adaugaSimbol(nume, FEL_FN);
+            crtFn->args = NULL;
+            adaugaDomeniu();
+
+
             if(consumeAtom(LPAR))
             {
                 if(funcParams())
@@ -126,6 +158,7 @@ int defFunc()
                         {
                             if(baseType())
                             {
+                                crtFn->tip = ret.tip;
                                 while(1)
                                 {
                                     if(defVar())
@@ -138,26 +171,28 @@ int defFunc()
                                 {
                                     if(consumeAtom(END))
                                     {
+                                        stergeDomeniu();
+                                        crtFn = NULL;
                                         return 1;
                                     }
                                     else 
                                     {
                                         // error: END expected
-                                        printError( "Error: END expected at line %d\n", currentAtom->line);
+                                        printError( "Error: END expected after block at line %d\n", currentAtom->line);
                                         return 0;
                                     }
                                 }
                                 else 
                                 {
                                     // error: block expected
-                                    printError( "Error: block expected at line %d\n", currentAtom->line);
+                                    printError( "Error: function block expected at line %d\n", currentAtom->line);
                                     return 0;
                                 }
                             }
                             else 
                             {
                                 // error: baseType expected
-                                printError( "Error: valid baseType expected at line %d\n", currentAtom->line);
+                                printError( "Error: valid function baseType expected at line %d\n", currentAtom->line);
                                 return 0;
                             }
                         }
@@ -196,7 +231,6 @@ int defFunc()
             return 0;
         }
     }
-    //currentAtom = consumedAtom;
     return 0;
 }
 
@@ -245,11 +279,23 @@ int funcParams()
 int funcParam()
 {
     if(consumeAtom(ID))
-    {
+    {        
+        const char* nume = consumedAtom->value.s;
+        Simbol* s = cautaInDomeniulCurent(nume);
+        if(s) {
+            char error[100];
+            sprintf(error, "Eroare la linia %d: Simbolul %s este deja definit\n", consumedAtom->line, nume);
+            printError(error, consumedAtom->line);
+        }
+        s = adaugaSimbol(nume, FEL_ARG);
+        Simbol* argFn = adaugaArgFn(crtFn, nume);
+
         if(consumeAtom(COLON))
         {
             if(baseType())
             {
+                s->tip = ret.tip;
+                argFn->tip = ret.tip;
                 return 1;
             }
             else 
@@ -570,7 +616,7 @@ int exprMul()
             else 
             {
                 // error: exprPrefix expected
-                printError( "Error: valid prefix expression expected at line %d\n", currentAtom->line);
+                printError( "Error: valid multiplication expression expected at line %d\n", currentAtom->line);
                 return 0;
             }
         }
@@ -583,7 +629,7 @@ int exprMul()
             else 
             {
                 // error: exprPrefix expected
-                printError( "Error: valid prefix expression expected at line %d\n", currentAtom->line);
+                printError( "Error: valid prefix expected after / at line %d\n", currentAtom->line);
                 return 0;
             }
         }

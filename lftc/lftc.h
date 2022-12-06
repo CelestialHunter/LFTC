@@ -11,7 +11,7 @@
 
 /*---------INCLUDES--------*/
 
-#ifndef ALEX_H
+#ifndef ALEX_H 
 #include "alex.h"
 #endif
 

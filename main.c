@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 	printf("\nLexical analysis done!\n");
 	printf("############################\n");
 
-	printf("Syntax analysis...\n");
+	printf("Syntax and domain analysis...\n");
 	initAsin();
 
 	if(program())
